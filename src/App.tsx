@@ -22,6 +22,8 @@ type Selected =
   | { type: "hand"; player: Player; index: number }
   | null;
 
+type Cell = { type: "empty" } | { type: "piece"; piece: Piece };
+
 const pieceLabels: Record<PieceType, string> = {
   PAWN: "歩",
   LANCE: "香",
@@ -39,69 +41,139 @@ const promotedPieceLabels: Record<PieceType, string> = {
   LANCE: "成香",
   KNIGHT: "成桂",
   SILVER: "成銀",
+  GOLD: "金",
+  KING: "玉",
 };
 
 function App() {
-  const [board, setBoard] = useState<(Piece | null)[][]>(
-    Array(9)
-      .fill(null)
-      .map((_, row) =>
-        Array(9)
-          .fill(null)
-          .map((_, col) => {
-            if (row === 6) {
-              return { type: "PAWN", player: "先手", promoted: false };
-            } else if (row === 2) {
-              return { type: "PAWN", player: "後手", promoted: false };
-            } else if (row === 7 && col === 7) {
-              return { type: "ROOK", player: "先手", promoted: false };
-            } else if (row === 1 && col === 1) {
-              return { type: "ROOK", player: "後手", promoted: false };
-            } else if (row === 7 && col === 1) {
-              return { type: "BISHOP", player: "先手", promoted: false };
-            } else if (row === 1 && col === 7) {
-              return { type: "BISHOP", player: "後手", promoted: false };
-            } else if (row === 8 && col === 0) {
-              return { type: "LANCE", player: "先手", promoted: false };
-            } else if (row === 8 && col === 8) {
-              return { type: "LANCE", player: "先手", promoted: false };
-            } else if (row === 0 && col === 8) {
-              return { type: "LANCE", player: "後手", promoted: false };
-            } else if (row === 0 && col === 0) {
-              return { type: "LANCE", player: "後手", promoted: false };
-            } else if (row === 8 && col === 1) {
-              return { type: "KNIGHT", player: "先手", promoted: false };
-            } else if (row === 8 && col === 7) {
-              return { type: "KNIGHT", player: "先手", promoted: false };
-            } else if (row === 0 && col === 7) {
-              return { type: "KNIGHT", player: "後手", promoted: false };
-            } else if (row === 0 && col === 1) {
-              return { type: "KNIGHT", player: "後手", promoted: false };
-            } else if (row === 8 && col === 2) {
-              return { type: "SILVER", player: "先手", promoted: false };
-            } else if (row === 8 && col === 6) {
-              return { type: "SILVER", player: "先手", promoted: false };
-            } else if (row === 0 && col === 6) {
-              return { type: "SILVER", player: "後手", promoted: false };
-            } else if (row === 0 && col === 2) {
-              return { type: "SILVER", player: "後手", promoted: false };
-            } else if (row === 8 && col === 3) {
-              return { type: "GOLD", player: "先手", promoted: false };
-            } else if (row === 8 && col === 5) {
-              return { type: "GOLD", player: "先手", promoted: false };
-            } else if (row === 0 && col === 5) {
-              return { type: "GOLD", player: "後手", promoted: false };
-            } else if (row === 0 && col === 3) {
-              return { type: "GOLD", player: "後手", promoted: false };
-            } else if (row === 8 && col === 4) {
-              return { type: "KING", player: "先手", promoted: false };
-            } else if (row === 0 && col === 4) {
-              return { type: "KING", player: "後手", promoted: false };
-            } else {
-              return null;
-            }
-          }),
-      ),
+  const [board, setBoard] = useState<Cell[][]>(
+    Array.from({ length: 9 }).map((_, row) =>
+      Array.from({ length: 9 }).map((_, col) => {
+        if (row === 6) {
+          return {
+            type: "piece",
+            piece: { type: "PAWN", player: "先手", promoted: false },
+          };
+        } else if (row === 2) {
+          return {
+            type: "piece",
+            piece: { type: "PAWN", player: "後手", promoted: false },
+          };
+        } else if (row === 7 && col === 7) {
+          return {
+            type: "piece",
+            piece: { type: "ROOK", player: "先手", promoted: false },
+          };
+        } else if (row === 1 && col === 1) {
+          return {
+            type: "piece",
+            piece: { type: "ROOK", player: "後手", promoted: false },
+          };
+        } else if (row === 7 && col === 1) {
+          return {
+            type: "piece",
+            piece: { type: "BISHOP", player: "先手", promoted: false },
+          };
+        } else if (row === 1 && col === 7) {
+          return {
+            type: "piece",
+            piece: { type: "BISHOP", player: "後手", promoted: false },
+          };
+        } else if (row === 8 && col === 0) {
+          return {
+            type: "piece",
+            piece: { type: "LANCE", player: "先手", promoted: false },
+          };
+        } else if (row === 8 && col === 8) {
+          return {
+            type: "piece",
+            piece: { type: "LANCE", player: "先手", promoted: false },
+          };
+        } else if (row === 0 && col === 8) {
+          return {
+            type: "piece",
+            piece: { type: "LANCE", player: "後手", promoted: false },
+          };
+        } else if (row === 0 && col === 0) {
+          return {
+            type: "piece",
+            piece: { type: "LANCE", player: "後手", promoted: false },
+          };
+        } else if (row === 8 && col === 1) {
+          return {
+            type: "piece",
+            piece: { type: "KNIGHT", player: "先手", promoted: false },
+          };
+        } else if (row === 8 && col === 7) {
+          return {
+            type: "piece",
+            piece: { type: "KNIGHT", player: "先手", promoted: false },
+          };
+        } else if (row === 0 && col === 7) {
+          return {
+            type: "piece",
+            piece: { type: "KNIGHT", player: "後手", promoted: false },
+          };
+        } else if (row === 0 && col === 1) {
+          return {
+            type: "piece",
+            piece: { type: "KNIGHT", player: "後手", promoted: false },
+          };
+        } else if (row === 8 && col === 2) {
+          return {
+            type: "piece",
+            piece: { type: "SILVER", player: "先手", promoted: false },
+          };
+        } else if (row === 8 && col === 6) {
+          return {
+            type: "piece",
+            piece: { type: "SILVER", player: "先手", promoted: false },
+          };
+        } else if (row === 0 && col === 6) {
+          return {
+            type: "piece",
+            piece: { type: "SILVER", player: "後手", promoted: false },
+          };
+        } else if (row === 0 && col === 2) {
+          return {
+            type: "piece",
+            piece: { type: "SILVER", player: "後手", promoted: false },
+          };
+        } else if (row === 8 && col === 3) {
+          return {
+            type: "piece",
+            piece: { type: "GOLD", player: "先手", promoted: false },
+          };
+        } else if (row === 8 && col === 5) {
+          return {
+            type: "piece",
+            piece: { type: "GOLD", player: "先手", promoted: false },
+          };
+        } else if (row === 0 && col === 5) {
+          return {
+            type: "piece",
+            piece: { type: "GOLD", player: "後手", promoted: false },
+          };
+        } else if (row === 0 && col === 3) {
+          return {
+            type: "piece",
+            piece: { type: "GOLD", player: "後手", promoted: false },
+          };
+        } else if (row === 8 && col === 4) {
+          return {
+            type: "piece",
+            piece: { type: "KING", player: "先手", promoted: false },
+          };
+        } else if (row === 0 && col === 4) {
+          return {
+            type: "piece",
+            piece: { type: "KING", player: "後手", promoted: false },
+          };
+        } else {
+          return { type: "empty" };
+        }
+      }),
+    ),
   );
 
   const [selected, setSelected] = useState<Selected>(null);
@@ -133,11 +205,13 @@ function App() {
     fromCol: number,
     toRow: number,
     toCol: number,
-  ) {
+  ): boolean {
     // 行き先に自分の駒がある場合は移動できない
-    if (board[toRow][toCol]?.player === piece.player) {
+    const target = board[toRow][toCol];
+    if (target.type === "piece" && target.piece.player === piece.player) {
       return false;
     }
+
     // いまいるマスへは移動できない
     if (toRow === fromRow && toCol === fromCol) {
       return false;
@@ -302,6 +376,7 @@ function App() {
       // 玉は周囲8マスに動ける
       return Math.abs(toRow - fromRow) <= 1 && Math.abs(toCol - fromCol) <= 1;
     }
+    return false;
   }
 
   function canDrop(selected: Selected, toRow: number, toCol: number) {
@@ -389,32 +464,59 @@ function App() {
         }}
       >
         {board.map((row, irow) =>
-          row.map((piece, icol) => {
+          row.map((cell, icol) => {
             const isSelected =
               selected?.type === "board" &&
               selected.row === irow &&
               selected.col === icol;
-            const isMovable =
-              selected &&
-              (selected.type === "board"
-                ? canMove(
-                    board[selected.row][selected.col],
+            const isMovable = (() => {
+              if (!selected) return false;
+
+              if (selected.type === "board") {
+                const fromCell = board[selected.row][selected.col];
+                if (fromCell.type !== "piece") return false;
+                return canMove(
+                  fromCell.piece,
+                  selected.row,
+                  selected.col,
+                  irow,
+                  icol,
+                );
+              } else if (selected && selected.type === "hand") {
+                return canDrop(selected, irow, icol);
+              } else {
+                return false;
+              }
+            })();
+            // selected && selected?.type === "board"
+            //   ? canMove(
+            //       board[selected.row][selected.col],
+            //       selected.row,
+            //       selected.col,
+            //       irow,
+            //       icol,
+            //     )
+            //   : selected?.type === "hand"
+            //     ? canDrop(selected, irow, icol)
+            //     : false;
+
+            const isPromotable = (() => {
+              if (!selected) return false;
+
+              if (selected.type === "board") {
+                const fromCell = board[selected.row][selected.col];
+
+                if (fromCell.type === "piece") {
+                  return canPromote(
+                    fromCell.piece,
                     selected.row,
                     selected.col,
                     irow,
                     icol,
-                  )
-                : canDrop(selected, irow, icol));
-
-            const isPromotable =
-              selected?.type === "board" &&
-              canPromote(
-                board[selected.row][selected.col],
-                selected.row,
-                selected.col,
-                irow,
-                icol,
-              );
+                  );
+                }
+              }
+            })();
 
             return (
               <div
@@ -430,9 +532,12 @@ function App() {
                   if (selected?.type === "hand" && isMovable) {
                     const newBoard = board.map((row) => [...row]);
                     newBoard[irow][icol] = {
-                      type: hands[selected.player][selected.index],
-                      player: selected.player,
-                      promoted: false,
+                      type: "piece",
+                      piece: {
+                        type: hands[selected.player][selected.index],
+                        player: selected.player,
+                        promoted: false,
+                      },
                     };
                     setBoard(newBoard);
                     setSelected(null);
@@ -453,7 +558,9 @@ function App() {
 
                   // 移動可能なマスをクリックしたら駒を移動する
                   if (selected?.type === "board" && isMovable) {
-                    let movingPiece = board[selected.row][selected.col];
+                    const fromCell = board[selected.row][selected.col];
+                    if (fromCell.type !== "piece") return;
+                    let movingPiece = fromCell.piece;
                     if (isPromotable) {
                       // 成れるなら成る
                       movingPiece = promote(movingPiece);
@@ -461,10 +568,11 @@ function App() {
 
                     if (board[irow][icol] !== null) {
                       // 相手の駒を取る場合は持ち駒に加える
+
                       const newHands = {
                         ...hands,
-                        [board[selected.row][selected.col].player]: [
-                          ...hands[board[selected.row][selected.col].player],
+                        [movingPiece.player]: [
+                          ...hands[movingPiece.player],
                           board[irow][icol].type,
                         ],
                       };
@@ -476,8 +584,11 @@ function App() {
                     }
 
                     const newBoard = board.map((row) => [...row]);
-                    newBoard[selected.row][selected.col] = null;
-                    newBoard[irow][icol] = movingPiece;
+                    newBoard[selected.row][selected.col] = { type: "empty" };
+                    newBoard[irow][icol] = {
+                      type: "piece",
+                      piece: movingPiece,
+                    };
                     setBoard(newBoard);
                     setSelected(null);
                     setCurrentPlayer(
@@ -485,8 +596,8 @@ function App() {
                     );
                     return;
                   } else if (
-                    piece !== null &&
-                    (debugMode || piece.player === currentPlayer)
+                    cell.type !== "empty" &&
+                    (debugMode || cell.piece.player === currentPlayer)
                   ) {
                     // 自分の駒をクリックしたら選択する
                     setSelected({ type: "board", row: irow, col: icol });
@@ -510,10 +621,12 @@ function App() {
                   justifyContent: "center",
                   fontSize: "24px",
                   transform:
-                    piece?.player === "後手" ? "rotate(180deg)" : "none",
+                    cell.type === "piece" && cell.piece.player === "後手"
+                      ? "rotate(180deg)"
+                      : "none",
                 }}
               >
-                {getPieceLabel(piece)}
+                {cell.type === "piece" ? getPieceLabel(cell.piece) : ""}
               </div>
             );
           }),

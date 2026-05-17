@@ -274,7 +274,7 @@ function App() {
         // 横に動く場合、途中に駒がないかチェック
         const step = toCol > fromCol ? 1 : -1;
         for (let col = fromCol + step; col !== toCol; col += step) {
-          if (board[fromRow][col] !== null) {
+          if (board[fromRow][col].type === "piece") {
             return false; // 障害物がある
           }
         }
@@ -283,7 +283,7 @@ function App() {
         // 縦に動く場合、途中に駒がないかチェック
         const step = toRow > fromRow ? 1 : -1;
         for (let row = fromRow + step; row !== toRow; row += step) {
-          if (board[row][fromCol] !== null) {
+          if (board[row][fromCol].type === "piece") {
             return false; // 障害物がある
           }
         }
@@ -302,7 +302,7 @@ function App() {
         row !== toRow && col !== toCol;
         row += rowStep, col += colStep
       ) {
-        if (board[row][col] !== null) {
+        if (board[row][col].type === "piece") {
           return false; // 障害物がある
         }
       }
@@ -314,7 +314,7 @@ function App() {
       }
       const step = piece.player === "先手" ? -1 : 1;
       for (let row = fromRow + step; row !== toRow; row += step) {
-        if (board[row][fromCol] !== null) {
+        if (board[row][fromCol].type === "piece") {
           return false; // 障害物がある
         }
       }
@@ -380,7 +380,7 @@ function App() {
   }
 
   function canDrop(selected: Selected, toRow: number, toCol: number) {
-    return !board[toRow][toCol];
+    return board[toRow][toCol].type !== "piece";
   }
 
   function canPromote(
@@ -428,6 +428,11 @@ function App() {
   }
   return (
     <div>
+      <div>
+        <button onClick={() => setDebugMode(!debugMode)}>
+          デバッグ切替：{debugMode ? "ON" : "OFF"}
+        </button>
+      </div>
       <h3>後手</h3>
       <div>
         持ち駒:
@@ -566,14 +571,13 @@ function App() {
                       movingPiece = promote(movingPiece);
                     }
 
-                    if (board[irow][icol] !== null) {
+                    if (board[irow][icol].type === "piece") {
                       // 相手の駒を取る場合は持ち駒に加える
-
                       const newHands = {
                         ...hands,
                         [movingPiece.player]: [
                           ...hands[movingPiece.player],
-                          board[irow][icol].type,
+                          board[irow][icol].piece.type,
                         ],
                       };
 

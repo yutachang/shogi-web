@@ -380,15 +380,16 @@ function App() {
   }
 
   function canDrop(selected: Selected, toRow: number, toCol: number) {
+    if (!selected) return false;
     return board[toRow][toCol].type !== "piece";
   }
 
   function canPromote(
     piece: Piece,
     fromRow: number,
-    fromCol: number,
+    // fromCol: number,
     toRow: number,
-    toCol: number,
+    // toCol: number,
   ) {
     return piece.player === "先手"
       ? (fromRow <= 2 || toRow <= 2) &&
@@ -512,13 +513,7 @@ function App() {
                 const fromCell = board[selected.row][selected.col];
 
                 if (fromCell.type === "piece") {
-                  return canPromote(
-                    fromCell.piece,
-                    selected.row,
-                    selected.col,
-                    irow,
-                    icol,
-                  );
+                  return canPromote(fromCell.piece, selected.row, irow);
                 }
               }
             })();
